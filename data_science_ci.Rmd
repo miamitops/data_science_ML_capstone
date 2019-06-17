@@ -1,8 +1,10 @@
 ---
 title: "EDX Data Science Project HarvardX"
 author: "Miami Kelvin"
-date: "2019-06-17"
-output: html_document
+date: '2019-06-17'
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -80,14 +82,14 @@ irisDf <- data.frame(irisCsv)
 names(irisDf) <- c('sepal_length_cm','sepal_width_cm','petal_length_cm','petal_width_cm', 'species')
 
 ```
-## Performing data cleaning and wrangling 
+## Data cleaning and wrangling 
 this dataset is a relatively clean we do not need to do cleaning
 we will replace all occurance of Iris before the species name instean
 ```{r data clean}
 irisDf <- irisDf %>% mutate(species = str_replace(species, 'Iris-', ''))
 
 ```
-## Summarise the dataset we will use
+## Data exploration and Summary
 This will give us a basis for our assumption in the classification
 
 ```{r summarise}
@@ -128,6 +130,16 @@ test <- irisDf[test_index,]
 
 train <- irisDf[-test_index,]
 
+
+
+
+```
+
+
+
+## Training the Model
+We will train a simple model using the discoveries we have made so far
+```{r training }
 petl_cutofs <- seq(min(train$petal_length_cm), max(train$petal_length_cm), 0.1)
 petw_cutofs <- seq(min(train$petal_width_cm), max(train$petal_width_cm), 0.1)
 
@@ -145,41 +157,50 @@ petw_accu <- map_dbl(petw_cutofs, function(x){
 	#%>% factor(levels = levels(test$species))
 	mean(y_hat == train$species)
 })
-print(petw_accu)
-print(petl_accu)
 
-best_cutof <- petw_cutofs[which.max(petw_accu)]
-best_cutof
 #we mutate the df and add the coefficient of variation that we can use in our classifier
 
 summary %>% mutate(cv_petl= sd_petl/avg_petl,cv_petw= sd_petw/avg_petw) %>% select(cv_petw, cv_petl)
 
+```
+## Obtain the Best cutoff
+Accuracy for the algorithm is:
+```{r cutoff }
+print(petw_accu)
+
+print(petl_accu)
+
+print(max(petw_accu))
+
+print(max(petl_accu))
+#Petal Width
+best_cutof_w <- petw_cutofs[which.max(petw_accu)]
+print(best_cutof_w)
+
+#Petal Length best cutoff
+best_cutof_l <- petl_cutofs[which.max(petl_accu)]
+print(best_cutof_l)
+```
+</br>
+##plot the results of the cutoffs
+```{r accuracy_cutoff plot }
+df_w <- data.frame(accuracy = petw_accu, cutofs = petw_cutofs)
+df_l <- data.frame(accuracy = petw_accu, cutofs = petw_cutofs)
+ggplot() + 
+  geom_line(data = df_l, aes(x = cutofs, y = accuracy), color = "blue") +
+  geom_line(data = df_w, aes(x = cutofs, y = accuracy), color = "red") +
+  xlab('Cutoff') +
+  ylab('Accuracy')
+
+
 
 ```
-
-#y_hat <- sample(c("setosa","versicolor", "virginica"), length(test_index), replace=TRUE) %>% factor(levels = levels(test$Species))
-
-
-## Training the Model
-We will train a simple model using the discoveries we have made so far
-```{r training }
-
-
-```
-
-
 ## Testing themodel on the Test Set
 
 
-## Evaluating accuracy of the test set
+## Conclussion 
+This script implemented a simple naive classification algorithm for classifying Iris flowers based on the petal length or petal width in isolation, the algorithm can be further modified to put into account both petal length and width as attributes.
 
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=TRUE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
