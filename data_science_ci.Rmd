@@ -1,0 +1,58 @@
+---
+title: "EDX Data Science Project HarvardX"
+author: "Miami Kelvin"
+date: "2019-06-17"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction to machine learning
+
+## Problem Statement
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Dataset overview
+
+```{r cars}
+summary(cars)
+```
+
+## Getting and installing dependencies
+
+## Performing data cleaning and wrangling 
+
+## Summarise the dataset we will use
+
+
+## Creating a model
+
+## Split the data to Training and Test sets
+
+
+## Training the Model
+
+
+## Evaluating the overal sensitivity and specificity of the model
+
+
+## Testing themodel on the Test Set
+
+
+## Evaluating accuracy of the test set
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=TRUE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
