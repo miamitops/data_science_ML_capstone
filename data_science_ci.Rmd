@@ -2,35 +2,100 @@
 title: "EDX Data Science Project HarvardX"
 author: "Miami Kelvin"
 date: "2019-06-17"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+library(readr) #file reading functions
+if(!require(tidyverse)) install.packages("tidyverse") 
+if(!require(tidyr)) install.packages("tidyr")
+if(!require(stringr)) install.packages("stringr") #string operation functions
+if(!require(ggplot2)) install.packages("ggplot2") #plotting library
+if(!require(plyr)) install.packages("plyr")
+
+library(dplyr)
+library(caret)
+library(purrr)
 ```
 
 ## Introduction to machine learning
+The Data Science course on EDX by Harvard has introduced me to some core data science concepts, i am certainly not yet a seasoned data scientist but with the little knowledge i have received from the course i will attempt to demonstrate machine learning through this ML capstone project.
+This ML projects offer you a a slightly naive approach to training and testing a Machine Learning algorith to categorise some images. 
 
 ## Problem Statement
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+At my current job, we recently engaged a suplier to digitize all our client documents. one of the requirements was to categorise documents based on type and unit and at the same time embed metadata elements. Their approach was to have human workers look through each and every document and categorize it, the project was for 140,000 files and on average each file has 30 different document types varying in content and structure which can be 1 of multiple types(approximately 42 not counting emails and unstructured documents). I saw this as a total waste of time and resources, this is something that could be done more efficiently using a well trained algorithem. While I am miles away from this, this will be a great way to learn. 
+Bingo! We have a great problem to implement a classification algorithm, this would have been a brillian project but taking a few steps back i realized i could not proceed with that given the timelines and the project requirements that data is available for peer review, so i went for the next BIG thing, Iris.
 
 ## Dataset overview
+There are very many datasets out in the wild however for a learning algorithm for image recognition and simple enough for a learner new to R and machine learning, the Iris data set is perfect. 
+Description and download of the iris dataset can be found at https://archive.ics.uci.edu/ml/datasets/Iris
 
-```{r cars}
-summary(cars)
-```
+
 
 ## Getting and installing dependencies
+We are going to install any dependencies if they are not installed
+## do some housecleaning
+```{r prerequisites: dataset}
 
+# get curent working directory
+cwd <- getwd()
+dataSourceUrl <- "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+
+print(paste("the curent working directory is ",cwd))
+# check if the data directory exists
+datadir <- "data"
+if(!dir.exists(file.path(cwd, datadir))){
+  print("data direcory does not exist it will be created")
+  #a try catch statement can help raise a warning if there are permission issues
+  dir.create(file.path(cwd, datadir))
+}else{
+  print("directory structure is ok we will now download iris dataset")
+}
+datapath <- file.path(cwd, datadir)
+dataFilePath <- file.path(datapath, 'iris.data')
+dataFilePath
+if(file.exists(dataFilePath)){
+  print("data file exists")
+} else {
+  print("data file does not exist, we will download it to the data directory")
+  download.file(dataSourceUrl, dataFilePath)
+}
+# Load iris dataset
+
+#conventional knowledge tells us this is a csv that does not have headers but we will preview it all the same
+irisCsv <- read_csv(dataFilePath, col_names = FALSE)
+head(irisCsv, 6)
+
+typeof(irisCsv)
+# data was imported as list, we would like it as tible or dataframe
+# we can assign collumn names here as well
+irisDf <- data.frame(irisCsv)
+names(irisDf) <- c('sepal_length_cm','sepal_width_cm','petal_length_cm','petal_width_cm', 'species')
+
+```
 ## Performing data cleaning and wrangling 
-
+this dataset is a relatively clean we do not need to do cleaning
+isna(irisDf)
 ## Summarise the dataset we will use
 
-
+```{r summarise}
+gp <- irisDf %>% group_by(species) %>% summarise(	avg_sepl = mean(sepal_length_cm), sd_sepl = sd(sepal_length_cm))
+gp
+```
 ## Creating a model
+```{r simplemodel}
+y <- irisDf$species
+set.seed(2)
+test_index <- createDataPartition(y,times=1,p=0.5,list=FALSE)
+test <- irisDf[test_index,]
+train <- irisDf[-test_index,]
+test
+```
+
+#y_hat <- sample(c("setosa","versicolor", "virginica"), length(test_index), replace=TRUE) %>% factor(levels = levels(test$Species))
+
 
 ## Split the data to Training and Test sets
 
