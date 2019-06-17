@@ -158,7 +158,7 @@ petw_accu <- map_dbl(petw_cutofs, function(x){
 	mean(y_hat == train$species)
 })
 
-#we mutate the df and add the coefficient of variation that we can use in our classifier
+#we mutate the df and add the coefficient of variation 
 
 summary %>% mutate(cv_petl= sd_petl/avg_petl,cv_petw= sd_petw/avg_petw) %>% select(cv_petw, cv_petl)
 
@@ -185,21 +185,28 @@ print(best_cutof_l)
 ##plot the results of the cutoffs
 ```{r accuracy_cutoff plot }
 df_w <- data.frame(accuracy = petw_accu, cutofs = petw_cutofs)
-df_l <- data.frame(accuracy = petw_accu, cutofs = petw_cutofs)
+df_l <- data.frame(accuracy = petl_accu, cutofs = petl_cutofs)
 ggplot() + 
   geom_line(data = df_l, aes(x = cutofs, y = accuracy), color = "blue") +
-  geom_line(data = df_w, aes(x = cutofs, y = accuracy), color = "red") +
-  xlab('Cutoff') +
-  ylab('Accuracy')
 
+  xlab('Cutoff') +
+  ylab('Accuracy') +
+  ggtitle("Petal width vs accuracy")
+
+ggplot() + 
+  geom_line(data = df_w, aes(x = cutofs, y = accuracy), color = "red") +
+ 
+  xlab('Cutoff') +
+  ylab('Accuracy')+
+  ggtitle("Petal length vs accuracy")
 
 
 ```
-## Testing themodel on the Test Set
+</b>
 
 
 ## Conclussion 
-This script implemented a simple naive classification algorithm for classifying Iris flowers based on the petal length or petal width in isolation, the algorithm can be further modified to put into account both petal length and width as attributes.
+This script implemented a simple naive classification algorithm for classifying Iris flowers based on the petal length or petal width in isolation, the algorithm can be further modified to put into account both petal length and width as attributes. The naive algorithm obtained a max accuracy level of 72% using the petal width attribute and 71 % using the petal length attribute
 
 
 
